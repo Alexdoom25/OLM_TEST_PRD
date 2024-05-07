@@ -1,0 +1,265 @@
+﻿@model OnlineMonitorModel
+
+@{
+    Layout = "~/Views/Shared/_onlineMonitorLayout.cshtml";
+
+    const string userNamespace = "advaris";  // must be valid js identifier
+
+    string[] machines = {
+        "MTI101",
+        "MAF101"
+        
+    };
+    string[] allMachines = machines;
+
+    const int schichtInterval = 60000;
+    const int updateInterval = 5000;
+}
+
+<style>
+    .advx-machine-cards-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+	.adv-dtw-mach-card-mach {
+		font-size:120% !important
+	}
+	.adv-dtw-mach-card-head {
+		font-size:70% !important
+	}
+	.adv-dtw-mach-card-body {
+		font-size:60% !important
+	}
+</style>
+
+<div class="advx-machine-cards-container">
+    @foreach (var machine in machines) {
+        string letzterStatusWechselSeit = "letzterStatusWechselSeit" + machine;
+        string letzterStatusWechselHidden = "letzterStatusWechselHidden" + machine;
+        string terminPlanende = "terminPlanende" + machine;
+        string terminPlanendeHidden = "terminPlanendeHidden" + machine;
+        string unterbrechungsGrund = "unterbrechungsGrund" + machine;
+        string statusNumber = "statusNumber" + machine;
+        string gridId = "grid" + machine;
+        <div class="machine-card">
+            <div class="machine-card-head advx-onlinemonitor-status" adv-machine="@machine">
+                <table class="adv-dtw-mach-card-head">
+                    <tr>
+                        <td width=66% class="machine-card-big-title machine-card-row-el adv-dtw-mach-card-mach"><span adv-machine="@machine" adv-property="MaschineNr"></span></td>
+                        <td><span class="machine-card-title machine-card-row-el " adv-machine="@machine" adv-property="MaschineDatenStatus"></span></td>
+
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el" style="display:flex; flex-direction:row;">
+                            <div id=@unterbrechungsGrund style="display:flex; flex-direction:row;">
+                                <span style="display: none;" id=@statusNumber adv-machine="@machine" adv-property="MaschineDatenStatusEnum"></span>
+                                <span adv-machine="@machine" adv-property="UnterbrechungsgrundNr"></span>
+                                <span> - </span>
+                                <span adv-machine="@machine" adv-property="UnterbrechungsgrundBez"></span>
+                            </div>
+                        </td>
+                        <td class="machine-card-row-el"><span style="display: none;" id=@letzterStatusWechselHidden adv-machine="@machine" adv-property="LetzterStatusWechsel"></span><span id=@letzterStatusWechselSeit></span></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el"><span adv-machine="@machine" adv-property="ArbeitsvorgangGeschwindigkeit"></span> <span adv-machine="@machine" adv-property="ArbeitsvorgangGeschwindigkeitEinheit"></span></td>
+                        <td class="machine-card-row-el">OEE <span adv-machine="@machine" adv-property="SchichtOEE"></span>%</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="machine-card-body adv-dtw-mach-card-body">
+                <table style="width:100%">
+                    <tr>
+                        <td class="machine-card-row-el" style="width:16.67%">Orden:</td>
+                        <td class="machine-card-row-el" colspan="3"><span adv-machine="@machine" adv-property="FertigungsauftragNr"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el" style="width:16.67%">Producto:</td>
+                        <td class="machine-card-row-el" colspan="3"><span adv-machine="@machine" adv-property="ArtikelNr"></span> <span adv-machine="@machine" adv-property="ArtikelBez"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el" style="width:16.67%">Tiempo:</td>
+                        <td class="machine-card-row-el" style="width:33.33%"><span adv-machine="@machine" adv-property="SollbearbeitungsDauerMitRuesten"></span>/<span adv-machine="@machine" adv-property="IstbearbeitungsDauerMitRuesten"></span> min</td>
+                        <td class="machine-card-row-el" style="width:16.67%">Fin Plan:</td>
+                        <td class="machine-card-row-el"><span adv-machine="@machine" adv-property="TerminPlanEnde"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el" style="width:16.67%">Cantidad:</td>
+                        <td class="machine-card-row-el" colspan="3"><span adv-machine="@machine" adv-property="Sollmenge"></span>/<span adv-machine="@machine" adv-property="MengeIst"></span> <span adv-machine="@machine" adv-property="SollmengeEinheitId"></span></td>
+                    </tr>
+                </table>
+                <div class="machine-card-target-actual-bar"><div class="machine-card-target-actual-bar-progress" adv-machine="@machine" adv-property="IstSollFortschritt"></div></div>
+                <div id="@gridId" style="margin-top: 1em"></div>
+            </div>
+        </div>
+    }
+</div>
+
+
+<script>
+    $(function () {
+        "use strict";
+
+        window.@(userNamespace) = window.@(userNamespace) || {};
+
+        const machines = [];
+        const machineNrValue = [];
+
+        window.@(userNamespace).mapMachines = function(machines, machineNrValue) {
+            let first = true;
+            let tmp = [];
+            @foreach (var machine in allMachines)
+            {
+                @:first ? first = false : machineNrValue.push("or");
+                @:tmp = ["MaschineNr", "=", "@machine"];
+                @:machineNrValue.push(tmp);
+                @:machines.push("@machine");
+            }
+        };
+
+        window.@(userNamespace).mapMachines(machines, machineNrValue);
+
+        const mng = new Advaris2.ERP.WebOnlineMonitor.Manager.start({
+            model: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model , new Newtonsoft.Json.Converters.JavaScriptDateTimeConverter())),
+            werkNr: 10,
+            dateTimeFormatOptions: {
+                hourCycle: "h23",
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            },
+            numberFormatOptions: {
+                useGrouping: true,
+                minimumIntegerDigits: 1,
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                maximumSignificantDigits: 4,
+            },
+            machineDataInterval: @updateInterval,
+            machineDataExpression: machineNrValue,
+            logDebug: true,
+        });
+
+        window.@(userNamespace).update = function() {
+            var now = new Date();
+
+            for (var machine of machines) {
+                // Update time since last status change
+                var letzterStatusWechselSeit = new Date($(`#letzterStatusWechselDB${machine}`).text().replace(",", ""));
+                var seconds = Math.floor((now - letzterStatusWechselSeit) / 1000);
+                $(`#letzterStatusWechselSeit${machine}`).text(window.@(userNamespace).calculateTime(seconds));
+
+                // Show interruption reason when interrupted
+                var statusUnterbrochen = @((int)MaschineDatenStatus.Unterbrochen);
+                if (parseInt($(`#statusNumber${machine}`).text()) == statusUnterbrochen) {
+                    $(`#unterbrechungsGrund${machine}`).css("display", "flex");
+                } else {
+                    $(`#unterbrechungsGrund${machine}`).css("display", "none");
+                }
+            }
+            setTimeout(() => { window.@(userNamespace).update(); }, @updateInterval);
+        }
+
+        window.@(userNamespace).calculateTime = function (seconds) {
+            var time = "-";
+            if (!isNaN(seconds)) {
+                const timeFormat = new Intl.RelativeTimeFormat("de", { style: "narrow" });
+                var minutes = Math.floor(seconds / 60);
+                var hours = Math.floor((minutes / 60));
+                var days = Math.floor(hours / 24);
+
+                if (!(days === 0 || isNaN(days))) {
+                    time = timeFormat.format(-days, "day");
+                } else if (!(hours === 0 || isNaN(hours))) {
+                    time = timeFormat.format(-hours, "hour");
+                } else if (!(minutes === 0 || isNaN(minutes))) {
+                    time = timeFormat.format(-minutes, "minute");
+                } else {
+                    time = timeFormat.format(-seconds, "second");
+                }
+            }
+            return time;
+        }
+
+        window.@(userNamespace).longestInterruptions = function (data, numberOfshifts) {
+            var resultList = [];
+            let machine = data.items;
+
+            // This loop gets the last n shifts
+            let shifts = [];
+            for (let i = 0; i < numberOfshifts; i++) {
+                shifts.push(machine[i]);
+            }
+
+            // This loop sums up the duration of every interruption
+            var dict = {};
+            for (let shift of shifts) {
+                if (shift == undefined) {
+                    continue;
+                } else {
+                    for (let kmsug of shift.items) {    // kmsug = KennzahlenMaschineSchichtUnterbrechungsgrund
+                        if (dict[kmsug.UnterbrechungsgrundId] != undefined) {
+                            dict[kmsug.UnterbrechungsgrundId].Dauer += kmsug.DauerUnterbrechung;
+                        } else {
+                            dict[kmsug.UnterbrechungsgrundId] = { UGrund: `${kmsug.UnterbrechungsgrundNr} - ${kmsug.UnterbrechungsgrundBez}`, Dauer: kmsug.DauerUnterbrechung };
+                        }
+                    }
+                }
+            }
+
+            for (var key in dict) {
+                resultList.push(dict[key]);
+            }
+            return resultList;
+        }
+
+        window.@(userNamespace).createGridsInterruption = function (promiseManager, numberOfShifts, numberOfVisibleInterruptions) {
+            const params = {
+                repaintChangesOnly: true,
+                showBorders: true,
+                columns: [{
+                    dataField: "UGrund",
+                    caption: "Razón Interrupción",
+                    allowSorting: false,
+                    alignment: "center",
+                }, {
+                    dataField: "Dauer",
+                    caption: "Duración(Minutos)",
+                    sortOrder: "desc",
+                    alignment: "center",
+                }],
+            };
+            for (var machine of machines) {
+                $('#grid' + machine).dxDataGrid(params).dxDataGrid("instance");
+            }
+            window.@(userNamespace).updateGridInterruption(promiseManager, numberOfShifts, numberOfVisibleInterruptions);
+        }
+
+        window.@(userNamespace).updateGridInterruption = function (promiseManager, numberOfShifts, numberOfVisibleInterruptions) {
+            promiseManager.then(function (manager) {
+                const ds = new DevExpress.data.DataSource({
+                    store: manager.dataStores.kennzahlenMaschineSchichtUGrund,
+                    filter: machineNrValue,
+                    group: ["MaschineNr", "SchichtStart"],
+                    sort: [{ selector: "SchichtStart", desc: true }],
+                    paginate: true,
+                    pageSize: numberOfVisibleInterruptions,
+                });
+                ds.load().done(function (result) {
+                    for (var data of result) {
+                        var list = window.@(userNamespace).longestInterruptions(data, numberOfShifts);
+                        $('#grid' + data.key).dxDataGrid("instance").option("dataSource", list);
+                    }
+
+                    setTimeout(() => {
+                        window.@(userNamespace).updateGridInterruption(promiseManager, numberOfShifts, numberOfVisibleInterruptions);
+                    }, @schichtInterval);
+                });
+            });
+        }
+
+        window.@(userNamespace).createGridsInterruption(mng, 3, 4);
+    });
+</script>

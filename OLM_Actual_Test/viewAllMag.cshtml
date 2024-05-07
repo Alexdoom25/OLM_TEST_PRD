@@ -1,0 +1,194 @@
+﻿<link rel="stylesheet" href="/OnlineMonitor/OLM_Condumex/CSS/style.css" type="text/css">
+@model OnlineMonitorModel
+@{
+    Layout = "~/Views/Shared/_onlineMonitorLayout.cshtml";
+
+    string[] machines = {"MEF101","MEG113","MEG114","MEG115","MEG116","MEI102","MEI103","MEM104","MAO101","MFO101","MFO103","MFO104","MSG101-01","MSG101-02",
+    "MSG101-03","MSG102-01","MSG102-02","MSG102-03","MSG109-01","MSG109-02","MSG109-03","MSG110-01","MSG110-02","MSG110-03","MSG111-01","MSG111-02","MSG111-03",
+    "MSG112-01","MSG112-02","MSG112-03","MSG113-01","MSG113-02","MSG113-03","MSG108-01","MSG108-02","MSG108-03","MSG108-04","MSG108-05","MSG108-06","MSF102-01",
+    "MSF102-02","MSF102-03","MSF102-04","MSF103-01","MSF103-02","MSF103-03","MSF103-04"};
+   string[] allMachines = registerAllMachines(machines);
+
+    string[] registerAllMachines(params string[][] arrays)
+    {
+        List<string> all = new List<string>();
+        foreach (var machineArray in arrays)
+        {
+            all.AddRange(machineArray.ToList().Where(o => !all.Contains(o)));
+        }
+        return all.ToArray();
+    }
+
+    const string prop1 = "Order:"; // Auftrag
+    const string prop2 = "Material:"; // Artikel
+    const string prop3 = "Runtime:"; // Laufzeit
+    const string prop4 = "Scheduled End:"; // Planende
+    const string prop5 = "Quantity:"; // Menge
+    const string prop6 = "DLC Designation:"; // UnterbrechungsgrundBez
+    
+    
+}
+<div class="header conductores">
+        <a href="#"><img class="logo" src="/OnlineMonitor/OLM_Condumex/Condumex_logo.svg.png" alt="Logo"></a>
+        <h1>Unidad Industrial Vallejo Monitor en Línea - Potencia / Conductores -Estirado</h1>
+</div>
+<div class="advx-machine-cards-container">
+    @foreach (var machine in machines)
+    {
+        <style>
+        .newcontainer{
+        margin:0 auto;
+        background-color:blueviolet;
+        Display:inline-grid;
+        width:-webkit-fill-available;
+        }
+        .newcontainer h1{
+            color: white;
+        }
+        .Forrado{
+            background-color:rgb(0, 112, 192);
+        }
+        .Extra{
+            background-color:rgb(0, 176, 80);
+        }
+        .vzf{
+            background-color:rgb(138, 30, 30);
+        }
+        .sev{
+            background-color:rgb(0,176,240);
+        }
+        .fino{
+            background-color:rgb(0,32,96));
+        }
+        </style>
+        if(machine ==  "MAO101"){
+            <div class="newcontainer Forrado">
+                <h1>Unidad Industrial Vallejo Monitor en Línea - Magneto / Forrado </h1>   
+            </div>
+        }else if (machine== "MSG101-01"){
+            <div class="newcontainer Extra">
+                <h1>Unidad Industrial Vallejo Monitor en Línea - Magneto / Extra Grueso </h1>   
+            </div>
+        }else if (machine== "MSG110-01"){
+            <div class="newcontainer vzf">
+                <h1>Unidad Industrial Vallejo Monitor en Línea - Magneto / VZF </h1>   
+            </div>
+        }else if (machine== "MSG108-01"){
+            <div class="newcontainer sev">
+                <h1>Unidad Industrial Vallejo Monitor en Línea - Magneto / NEVs </h1>   
+            </div>
+        }else if (machine== "MSF102-01"){
+            <div class="newcontainer fino">
+                <h1>Unidad Industrial Vallejo Monitor en Línea - Magneto / SEVs </h1>   
+            </div>
+        }else if (machine== "MCU104"){
+            <div class="newcontainer Reunido">
+                <h1>Unidad Industrial Vallejo Monitor en Línea - Magneto / Reunido y encintado - Reunido </h1>   
+            </div>
+        }else if (machine== "MNG101"){
+            <div class="newcontainer Reunido">
+                <h1>Unidad Industrial Vallejo Monitor en Línea - Magneto / Reunido y encintado - Engargolado </h1>   
+            </div>
+        }else if (machine== "MEC101"){
+            <div class="newcontainer Reunido">
+                <h1>Unidad Industrial Vallejo Monitor en Línea - Magneto / Reunido y encintado - Encintado </h1>   
+            </div>
+        }else if (machine== "MIM101"){
+            <div class="newcontainer Corte">
+                <h1>Unidad Industrial Vallejo Monitor en Línea - Magneto / Corte y Trenzado - Impregnado</h1>   
+            </div>
+        }else if (machine== "MTZ101"){
+            <div class="newcontainer Corte">
+                <h1>Unidad Industrial Vallejo Monitor en Línea - Magneto / Corte y Trenzado - Trenzado</h1>   
+            </div>
+        }else if (machine== "MTG101"){
+            <div class="newcontainer Corte">
+                <h1>Unidad Industrial Vallejo Monitor en Línea - Magneto / Corte y Trenzado - Corte </h1>   
+            </div>
+        }
+        <div class="machine-card">
+            <div class="machine-card-head advx-onlinemonitor-status" adv-machine=@machine>
+                <table>
+                    <tr>
+                        <td width="66%" class="machine-card-big-title machine-card-row-el"><span adv-machine=@machine adv-property="MaschineNr"></span></td>
+                        <td class="machine-card-title machine-card-row-el" adv-machine=@machine adv-property="MaschineDatenStatus"></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el" colspan="3"><span adv-machine="@machine" adv-property="MaschineBez">/</span></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el" colspan="3"><span adv-machine="@machine" adv-property="UnterbrechungsgrundBez">/</span></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el"><span adv-machine="@machine" adv-property="ArbeitsvorgangGeschwindigkeit"></span> <span adv-machine="@machine" adv-property="ArbeitsvorgangGeschwindigkeitEinheit"></span></td>
+                        <td class="machine-card-row-el">OEE <span adv-machine="@machine" adv-property="SchichtOEE"></span> <span adv-machine="@machine" adv-property="KennzAktSchichtSchichtOEE"></span>%</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="machine-card-body">
+                <table style="width:100%">
+                    <tr>
+                        <td class="machine-card-row-el" style="width:16.67%">@prop1</td>
+                        <td class="machine-card-row-el" colspan="3"><span adv-machine="@machine" adv-property="FertigungsauftragNr"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el" style="width:16.67%">@prop2</td>
+                        <td class="machine-card-row-el" colspan="3"><span adv-machine="@machine" adv-property="ArtikelNr"></span> <span adv-machine="@machine" adv-property="ArtikelBez"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el" style="width:16.67%">@prop3</td>
+                        <td class="machine-card-row-el" style="width:28%"><span adv-machine="@machine" adv-property="SollbearbeitungsDauerMitRuesten"></span>/<span adv-machine="@machine" adv-property="IstbearbeitungsDauerMitRuesten"></span> min</td>
+                        <td class="machine-card-row-el" style="width:26%">@prop4</td>
+                        <td class="machine-card-row-el"><span adv-machine="@machine" adv-property="TerminPlanEnde"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el" style="width:16.67%">@prop5</td>
+                        <td class="machine-card-row-el" colspan="3"><span adv-machine="@machine" adv-property="Sollmenge"></span>/<span adv-machine="@machine" adv-property="MengeIst"></span> <span adv-machine="@machine" adv-property="SollmengeEinheitId"></span></td>                    </tr>
+                </table>
+                <div class="machine-card-target-actual-bar"><div class="machine-card-target-actual-bar-progress" adv-machine="@machine" adv-property="IstSollFortschritt"></div></div>
+            </div>
+        </div>
+    }
+</div>
+<script>
+    function registerMachines() {
+        let result = [];
+        let first = true;
+        let tmp = [];
+        @foreach (var machine in allMachines)
+        {
+            @:first ? first = false : result.push("or");
+            @:tmp = ["MaschineNr", "=", "@machine"];
+            @:result.push(tmp);
+        }
+        return result;
+    };
+    $(function () {
+        "use strict";
+
+        const machines = registerMachines();
+
+        const mng = new Advaris2.ERP.WebOnlineMonitor.Manager.start({
+            model: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model , new Newtonsoft.Json.Converters.JavaScriptDateTimeConverter())),
+            werkNr: 10,
+            dateTimeFormatOptions: {
+                hourCycle: "h23",
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            },
+            numberFormatOptions: {
+                useGrouping: true,
+                minimumIntegerDigits: 1,
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                maximumSignificantDigits: 4,
+            },
+            machineDataInterval: 5000,
+            machineDataExpression: machines,
+            logDebug: false,
+        });
+    });
+</script>

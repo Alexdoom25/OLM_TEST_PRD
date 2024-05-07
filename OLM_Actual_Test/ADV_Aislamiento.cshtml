@@ -1,0 +1,131 @@
+﻿<link rel="stylesheet" href="/OnlineMonitor/OLM_Condumex/CSS/style.css" type="text/css">
+@model OnlineMonitorModel
+@{
+    Layout = "~/Views/Shared/_onlineMonitorLayout.cshtml";
+
+    string[] machines = { "MAF101","MAF102","MAF103","MAF104","MAF105","MAP101","MAP102","MAP103"};
+    string[] allMachines = registerAllMachines(machines);
+
+    string[] registerAllMachines(params string[][] arrays)
+    {
+        List<string> all = new List<string>();
+        foreach (var machineArray in arrays)
+        {
+            all.AddRange(machineArray.ToList().Where(o => !all.Contains(o)));
+        }
+        return all.ToArray();
+    }
+
+    const string prop1 = "Order:"; // Auftrag
+    const string prop2 = "Material:"; // Artikel
+    const string prop3 = "Runtime:"; // Laufzeit
+    const string prop4 = "Scheduled End:"; // Planende
+    const string prop5 = "Quantity:"; // Menge
+    const string prop6 = "DLC Designation:"; // UnterbrechungsgrundBez
+    const string prop7 = "Semi:"; // UnterbrechungsgrundBez
+    
+    
+    
+}
+<div class="header tubulado">
+        <a href="#"><img class="logo" src="/OnlineMonitor/OLM_Condumex/Condumex_logo.svg.png" alt="Logo"></a>
+        <h1>Unidad Industrial Vallejo Monitor en Línea - Potencia / Tubulado - Aislamiento</h1>
+</div>
+<div class="advx-machine-cards-container">
+    @foreach (var machine in machines)
+    {
+        <div class="machine-card">
+            <div class="machine-card-head advx-onlinemonitor-status" adv-machine=@machine>
+                <table>
+                    <tr>
+                        <td width="66%" class="machine-card-big-title machine-card-row-el"><span adv-machine=@machine adv-property="MaschineNr"></span></td>
+                        <td class="machine-card-title machine-card-row-el" adv-machine=@machine adv-property="MaschineDatenStatus"></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el" colspan="3"><span adv-machine="@machine" adv-property="MaschineBez">/</span></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el" colspan="3"><span adv-machine="@machine" adv-property="UnterbrechungsgrundBez">/</span></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el"><span adv-machine="@machine" adv-property="ArbeitsvorgangGeschwindigkeit"></span> <span adv-machine="@machine" adv-property="ArbeitsvorgangGeschwindigkeitEinheit"></span></td>
+                        <td class="machine-card-row-el">OEE <span adv-machine="@machine" adv-property="SchichtOEE"></span> <span adv-machine="@machine" adv-property="KennzAktSchichtSchichtOEE"></span>%</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="machine-card-body">
+                <table style="width:100%">
+                    <tr>
+                        <td class="machine-card-row-el" style="width:16.67%">@prop1</td>
+                        <td class="machine-card-row-el" colspan="3"><span adv-machine="@machine" adv-property="FertigungsauftragNr"></span> / <span adv-machine="@machine" adv-property="SfcArbeitsvorgangNr"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el" style="width:16.67%">@prop2</td>
+                        <td class="machine-card-row-el" colspan="3"><span adv-machine="@machine" adv-property="ArtikelNr"></span> <span adv-machine="@machine" adv-property="ArtikelBez"></span></td>
+                    </tr>
+                    <tr>
+                    <td class="machine-card-row-el" style="width:16.67%">@prop7</td>
+                        <td class="machine-card-row-el" colspan="3"><span adv-machine="@machine" adv-property="HafaArtikelNr"></span> <span adv-machine="@machine" adv-property="HafaArtikelBez"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el" style="width:16.67%">@prop3</td>
+                        <td class="machine-card-row-el" style="width:28%"><span adv-machine="@machine" adv-property="SollbearbeitungsDauerMitRuesten"></span>/<span adv-machine="@machine" adv-property="IstbearbeitungsDauerMitRuesten"></span> min</td>
+                        <td class="machine-card-row-el" style="width:26%">@prop4</td>
+                        <td class="machine-card-row-el"><span adv-machine="@machine" adv-property="TerminPlanEnde"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el" style="width:16.67%">@prop5</td>
+                        <td class="machine-card-row-el" colspan="3"><span adv-machine="@machine" adv-property="Sollmenge"></span>/<span adv-machine="@machine" adv-property="MengeIst"></span> <span adv-machine="@machine" adv-property="SollmengeEinheitId"></span></td>                    
+                    </tr>
+                </table>
+                <div class="machine-card-target-actual-bar"><div class="machine-card-target-actual-bar-progress" adv-machine="@machine" adv-property="IstSollFortschritt"></div></div>
+            </div>
+        </div>
+    }
+</div>
+<div class="buttons tubulado">
+        <a class="btn" href="https://advuiverptest.condumex.com.mx/OnlineMonitor/mvc/Display/Show?id=Menu_Tubulado">Menu Anterior</a>
+        <a class="btn" href="https://advuiverptest.condumex.com.mx/OnlineMonitor/mvc/Display/Show?id=Menu">Menu Principal</a>
+</div>
+<script>
+    function registerMachines() {
+        let result = [];
+        let first = true;
+        let tmp = [];
+        @foreach (var machine in allMachines)
+        {
+            @:first ? first = false : result.push("or");
+            @:tmp = ["MaschineNr", "=", "@machine"];
+            @:result.push(tmp);
+        }
+        return result;
+    };
+    $(function () {
+        "use strict";
+
+        const machines = registerMachines();
+
+        const mng = new Advaris2.ERP.WebOnlineMonitor.Manager.start({
+            model: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model , new Newtonsoft.Json.Converters.JavaScriptDateTimeConverter())),
+            werkNr: 10,
+            dateTimeFormatOptions: {
+                hourCycle: "h23",
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            },
+            numberFormatOptions: {
+                useGrouping: true,
+                minimumIntegerDigits: 1,
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                maximumSignificantDigits: 4,
+            },
+            machineDataInterval: 5000,
+            machineDataExpression: machines,
+            logDebug: false,
+        });
+    });
+</script>
