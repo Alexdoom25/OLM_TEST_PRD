@@ -1,0 +1,209 @@
+l
+*{
+    padding:0;
+    margin:0;
+}
+html{
+    background-color:white;
+    margin:0;
+    
+}
+h1{
+    text-align: center;
+    font-size: 29px; 
+    font-weight: 200;  
+}
+body{
+    font-family: "Helvetica Neue","Segoe UI",helvetica,verdana,sans-serif; ;
+}
+/* Headers */
+.header{
+    margin:0 auto;
+    background-color:black;
+    display: flex;
+    align-items: center;
+    gap: 11rem;
+    padding: .5rem;
+}
+.header.principal{
+    gap: 19rem;
+}
+.header.conductores{
+    background-color: blueviolet;
+    gap: 8rem;
+    padding-right: 20rem;
+}
+.header.tubulado{
+    background-color:rgb(0, 112, 192);
+    gap: 8rem;
+    padding-right: 20rem;
+}
+.header.reunido{
+    background-color:rgb(0, 176, 80) ;
+    gap: 8rem;
+    padding-right: 20rem;
+}
+.header.corte{
+    background-color:rgb(138, 30, 30) ;
+    gap: 8rem;
+    padding-right: 20rem;
+}
+.header.estiradomag{
+    background-color:rgb(112, 48, 160) ;
+    gap: 8rem;
+    padding-right: 20rem;
+}
+.header.forrado{
+    background-color:rgb(0,112,192) ;
+    gap: 8rem;
+    padding-right: 20rem;
+}
+.header.extra{
+    background-color:rgb(0,176,80) ;
+    gap: 8rem;
+    padding-right: 20rem;
+}
+.header.vzf{
+    background-color:rgb(192,0,0) ;
+    gap: 8rem;
+    padding-right: 20rem;
+}
+.header.nev{
+    background-color:rgb(197,90,17) ;
+    gap: 8rem;
+    padding-right: 20rem;
+}
+.header.sev{
+    background-color:rgb(0,176,240) ;
+    gap: 8rem;
+    padding-right: 20rem;
+}
+.header.sem{
+    background-color:rgb(175,171,171) ;
+    gap: 8rem;
+    padding-right: 20rem;
+}
+.header.fino{
+    background-color:rgb(0,32,96) ;
+    gap: 8rem;
+    padding-right: 20rem;
+}
+.logo{
+    width: 98px;
+    height: 60px;
+    margin-right: 1rem;
+    background-color: white;
+    
+}
+.header h1 {
+    margin: 0;
+    color: white;
+}
+
+/* Contenedores */
+.container {
+    max-width: 120rem;
+    width: 90%;
+    margin: 0 auto;
+    padding-top: 10rem;
+}
+.container.potencia{
+    padding-top: 1rem;
+}
+.container.magneto{
+    padding-top: 1rem;
+}
+/* Listas */
+.procesos{
+    display: flex;
+    justify-content:center;
+    gap: 10rem;
+    font-size: 1.5rem;
+    text-align: center;
+  }
+  ul, li{
+    list-style: none;
+    padding: 0;
+  }
+  .procesos li a{
+    background-color:white;
+    color: #333;
+    text-decoration: none;
+    padding: 10px 15px;
+    display: block;
+    font-family: Arial, Helvetica, sans-serif;
+
+  }
+  .procesos > li{
+    float: left;
+  }
+  .procesos li a:hover{
+    background-color: bisque;
+    transition-duration: .5s;
+  }
+  .procesos li ul{
+    display:none;
+    position: absolute;
+    min-width: 280px;
+  }
+  .procesos li:hover > ul{
+    display:block;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  }
+  
+  .procesos li ul li{
+    position: relative;
+  }
+  
+  .procesos li ul li ul{
+    right: -280px;
+    top: 0;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  }
+/* botones */
+.buttons{
+    display: flex;
+    justify-content:right;
+    margin-right: 8rem;
+    padding-top: 2rem;
+}
+.btn{
+    text-decoration: none;
+    color: white;
+    cursor: pointer;
+    background-color: rgb(68, 114, 196);
+    padding: .5rem .5rem;
+    font-size: 1.5rem;
+    border-radius: .8rem;
+}
+.buttons.conductores, 
+.buttons.tubulado,
+.buttons.reunido,
+.buttons.corte{
+    display: flex;
+    justify-content: right;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-right: 8rem;
+    padding-top: .5rem;
+    gap: 2rem;  
+}
+.advx-machine-cards-container .machine-card{
+    font-size:15px;
+}
+.dx-theme-generic-typography a{
+    color: white;
+}
+.advx-machine-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+.adv-dtw-mach-card-mach {
+    font-size:120% !important;
+}
+.adv-dtw-mach-card-head {
+    font-size:70% !important;
+}
+.adv-dtw-mach-card-body {
+    font-size:60% !important;
+}
