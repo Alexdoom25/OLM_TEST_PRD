@@ -1,0 +1,146 @@
+﻿<link rel="stylesheet" href="/OnlineMonitor/OLM_Condumex/CSS/style.css" type="text/css">
+@model OnlineMonitorModel
+@{
+    Layout = "~/Views/Shared/_onlineMonitorLayout.cshtml";
+
+    string[] machines = { "MEG101","MEG104","MEG107","MEG110","MEM105","MBU103","MBU105","MBU106","MCG103","MCG104","MCG105","MCG106","MCG107",
+                        "MCI101","MCI102","MCI103","MCI105","MCI106","MCI109","MAF101","MAF102","MAF103","MAF104","MAF105","MAP101","MAP102","MAP103",
+                        "MCU101","MCU102","MCU103","MCU104","MEG101","MEG104","MEG107","MEG110","MEM105","MNG101","MNG102","MEC101","MEC102","MEC104",
+                        "MEC105","MEC106","MER101","MIM101","MTZ101","MTZ102","MTZ103","MTZ104","MTZ105","MTZ106","MTZ107","MTZ108","MTG101","MTG102","MEF101","MEG113","MEG114","MEG115","MEG116","MEI102","MEI103","MEM104","MAO101","MFO101","MFO103","MFO104","MSG101-01","MSG101-02",
+                        "MSG101-03","MSG102-01","MSG102-02","MSG102-03","MSG109-01","MSG109-02","MSG109-03","MSG110-01","MSG110-02","MSG110-03","MSG111-01","MSG111-02","MSG111-03",
+                        "MSG112-01","MSG112-02","MSG112-03","MSG113-01","MSG113-02","MSG113-03","MSG108-01","MSG108-02","MSG108-03","MSG108-04","MSG108-05","MSG108-06","MSF102-01",
+                        "MSF102-02","MSF102-03","MSF102-04","MSF103-01","MSF103-02","MSF103-03","MSF103-04"};
+    string[] statusMachine = {"Parado"};
+    string[] allStatus = registerAllStatus(statusMachine);
+    string[] allMachines = registerAllMachines(machines);
+
+    string[] registerAllMachines(params string[][] arrays)
+    {
+        List<string> all = new List<string>();
+        foreach (var machineArray in arrays)
+        {
+            all.AddRange(machineArray.ToList().Where(o => !all.Contains(o)));
+        }
+        return all.ToArray();
+    }
+    string[] registerAllStatus(params string[][] arrays)
+    {
+        List<string> all = new List<string>();
+        foreach (var statusArray in arrays)
+        {
+            all.AddRange(statusArray.ToList().Where(o => !all.Contains(o)));
+        }
+        return all.ToArray();
+    }
+
+    const string prop1 = "Order:"; // Auftrag
+    const string prop2 = "Material:"; // Artikel
+    const string prop3 = "Runtime:"; // Laufzeit
+    const string prop4 = "Scheduled End:"; // Planende
+    const string prop5 = "Quantity:"; // Menge
+    const string prop6 = "DLC Designation:"; // UnterbrechungsgrundBez
+    
+    
+}
+<div class="header corte">
+        <a href="#"><img class="logo" src="/OnlineMonitor/OLM_Condumex/Condumex_logo.svg.png" alt="Logo"></a>
+        <h1>Unidad Industrial Vallejo Monitor en Línea - Máquinas en Producción</h1>
+</div>
+<div class="advx-machine-cards-container">
+    @foreach (var status in allMachines)
+    {
+        if( status == "Parado"){
+            <div class="newcontainer">
+                <h1>Unidad Industrial Vallejo Monitor en Línea - Potencia / Conductores - Bunchado </h1>   
+            </div>
+  
+        }
+        <div class="machine-card">
+            <div class="machine-card-head advx-onlinemonitor-status" adv-machine=@status>
+                <table>
+                    <tr>
+                        <td width="66%" class="machine-card-big-title machine-card-row-el"><span adv-machine=@status adv-property="MaschineNr"></span></td>
+                        <td class="machine-card-title machine-card-row-el" adv-machine=@status adv-property="MaschineDatenStatus"></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el" colspan="3"><span adv-machine="@status" adv-property="MaschineBez">/</span></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el" colspan="3"><span adv-machine="@status" adv-property="UnterbrechungsgrundBez">/</span></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el"><span adv-machine="@status" adv-property="ArbeitsvorgangGeschwindigkeit"></span> <span adv-machine="@status" adv-property="ArbeitsvorgangGeschwindigkeitEinheit"></span></td>
+                        <td class="machine-card-row-el">OEE <span adv-machine="@status" adv-property="SchichtOEE"></span> <span adv-machine="@status" adv-property="KennzAktSchichtSchichtOEE"></span>%</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="machine-card-body">
+                <table style="width:100%">
+                    <tr>
+                        <td class="machine-card-row-el" style="width:16.67%">@prop1</td>
+                        <td class="machine-card-row-el" colspan="3"><span adv-machine="@status" adv-property="FertigungsauftragNr"></span> / <span adv-machine="@status" adv-property="SfcArbeitsvorgangNr"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el" style="width:16.67%">@prop2</td>
+                        <td class="machine-card-row-el" colspan="3"><span adv-machine="@status" adv-property="ArtikelNr"></span> <span adv-machine="@status" adv-property="ArtikelBez"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el" style="width:16.67%">@prop3</td>
+                        <td class="machine-card-row-el" style="width:28%"><span adv-machine="@status" adv-property="SollbearbeitungsDauerMitRuesten"></span>/<span adv-machine="@status" adv-property="IstbearbeitungsDauerMitRuesten"></span> min</td>
+                        <td class="machine-card-row-el" style="width:26%">@prop4</td>
+                        <td class="machine-card-row-el"><span adv-machine="@status" adv-property="TerminPlanEnde"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="machine-card-row-el" style="width:16.67%">@prop5</td>
+                        <td class="machine-card-row-el" colspan="3"><span adv-machine="@status" adv-property="Sollmenge"></span>/<span adv-machine="@status" adv-property="MengeIst"></span> <span adv-machine="@status" adv-property="SollmengeEinheitId"></span></td>                    </tr>
+                </table>
+                <div class="machine-card-target-actual-bar"><div class="machine-card-target-actual-bar-progress" adv-machine="@status" adv-property="IstSollFortschritt"></div></div>
+            </div>
+        </div>
+    }
+</div>
+<div class="buttons tubulado">
+        <a class="btn" href="https://advuiverptest.condumex.com.mx/OnlineMonitor/mvc/Display/Show?id=Menu">Menu Principal</a>
+</div>
+<script>
+    function registerMachines() {
+        let result = [];
+        let first = true;
+        let tmp = [];
+        @foreach (var machine in allStatus)
+        {
+            @:first ? first = false : result.push("or");
+            @:tmp = ["MaschineDatenStatus", "=", "Producción"];
+            @:result.push(tmp);
+        }
+        return result;
+    };
+    $(function () {
+        "use strict";
+
+        const machines = registerMachines();
+
+        const mng = new Advaris2.ERP.WebOnlineMonitor.Manager.start({
+            model: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model , new Newtonsoft.Json.Converters.JavaScriptDateTimeConverter())),
+            werkNr: 10,
+            dateTimeFormatOptions: {
+                hourCycle: "h23",
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            },
+            numberFormatOptions: {
+                useGrouping: true,
+                minimumIntegerDigits: 1,
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                maximumSignificantDigits: 4,
+            },
+            machineDataInterval: 2000,
+            machineDataExpression: machines,
+            logDebug: false,
+        });
+    });
+</script>
